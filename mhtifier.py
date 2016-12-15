@@ -65,12 +65,17 @@ def main():
 			sys.stderr.write("Unpacking...\n")
 
 		# Read entire MHT archive -- it's a multipart(/related) message.
-		a = email.message_from_bytes(mht.read()) # Parser is "conducive to incremental parsing of email messages, such as would be necessary when reading the text of an email message from a source that can block", so I guess it's more efficient to have it read stdin directly, rather than buffering.
+		a = email.message_from_bytes(mht.read()) # Parser is "conducive to incremental parsing of email messages, such as would be necessary when reading the text of an email message from a source that can block", so I guess it's more efficient to have it read stdin directly, rather than buffering.				
 
+		if type(a.get_payload()) is list: 
+                    parts = a.get_payload() # multiple parts are given
+		else: 
+                    parts = [a] # single 'str' part is given
+                		                                                    
 		# Save all parts to files.
-		for p in a.get_payload(): # walk() for a tree, but I'm guessing MHT is never nested?
-			#??? cs = p.get_charset() # Expecting "utf-8" for root HTML, None for all other parts.
-			ct = p.get_content_type() # String coerced to lower case of the form maintype/subtype, else get_default_type().
+		for p in parts: # walk() for a tree, but I'm guessing MHT is never nested?
+			#??? cs = p.get_charset() # Expecting "utf-8" for root HTML, None for all other parts.						
+			ct = p.get_content_type() # String coerced to lower case of the form maintype/subtype, else get_default_type().			
 			fp = p.get("content-location") or "index.html" # File path. Expecting root HTML is only part with no location.
 
 			if args.verbose:
@@ -84,7 +89,7 @@ def main():
 			open(fp, "wb").write(p.get_payload(decode=True))
 
 		if not args.quiet:
-			sys.stderr.write("Done.\nUnpacked %d files.\n" % (len(a.get_payload())))
+			sys.stderr.write("Done.\nUnpacked %d files.\n" % (len(parts)))
 
 	else:
 		if not args.quiet:
