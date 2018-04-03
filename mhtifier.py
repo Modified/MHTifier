@@ -67,9 +67,9 @@ def main():
 		# Read entire MHT archive -- it's a multipart(/related) message.
 		a = email.message_from_bytes(mht.read()) # Parser is "conducive to incremental parsing of email messages, such as would be necessary when reading the text of an email message from a source that can block", so I guess it's more efficient to have it read stdin directly, rather than buffering.				
 
-                parts = a.get_payload() # Multiple parts, usually?
-		if not type(parts) is list: 
-                    parts = [a] # Single 'str' part, so convert to list.
+		parts = a.get_payload() # Multiple parts, usually?
+		if not type(parts) is list:
+			parts = [a] # Single 'str' part, so convert to list.
                 		                                                    
 		# Save all parts to files.
 		for p in parts: # walk() for a tree, but I'm guessing MHT is never nested?
