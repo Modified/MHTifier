@@ -83,9 +83,9 @@ def main():
 			# Create directories as necessary.
 			if os.path.dirname(fp):
 				os.makedirs(os.path.dirname(fp), exist_ok=True)
-
-			# Save part's body to a file.
-			open(fp, "wb").write(p.get_payload(decode=True))
+			else:
+				# Save part's body to a file.
+				open(fp, "wb").write(p.get_payload(decode=True))
 
 		if not args.quiet:
 			sys.stderr.write("Done.\nUnpacked %d files.\n" % (len(parts)))
